@@ -20,29 +20,44 @@ const database = {
   ]
 };
 
-app.post("/signin", (req, res) => {
+app.post("/signin", (request, response) => {
   if (
-    req.body.email === database.users[0].email &&
-    req.body.password === database.users[0].password
+    request.body.email === database.users[0].email &&
+    request.body.password === database.users[0].password
   ) {
-    res.json("success");
+    response.json("success");
   } else {
-    res.status(400).json("error logging in");
+    response.status(400).json("error logging in");
   }
 });
 
-app.post("/register", (req, res) => {
-  const { email, name, password } = req.body;
+app.post("/register", (request, response) => {
+  const { email, name, password } = request.body;
   database.users.push({
-    id: database.users.length,
+    id: database.users.length + 1,
     name: name,
     email: email,
     password: password,
     entries: 0,
     joined: new Date()
   });
-  res.json(database.users[database.users.length -1])
+  response.json(database.users[database.users.length - 1]);
 });
+
+app.get("/profile/:id", (request, response) => {
+  const index = database.users.find(
+    element => element.id === parseInt(request.params.id)
+  );
+  console.log("index is: ", index);
+  if (index !== undefined) {
+    response.json(index);
+    console.log("returning:", index);
+  } else {
+    response.status(404).json("Page not found");
+    console.log("error 404");
+  }
+});
+
 /* /signin -> POST success/fail
  * /register -> POST success => return user
  * /profile/:userId -> GET user
