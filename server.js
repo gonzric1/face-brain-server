@@ -63,7 +63,7 @@ app.put('/image', (request, response) => {
     element => element.id === parseInt(request.body.userid),
   );
   if (user) {
-    user.entries += 1;
+    user.entries++;
     response.json(user.entries);
   } else {
     response.status(404).json('User not found');
