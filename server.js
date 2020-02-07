@@ -10,15 +10,16 @@ app.use(express.static(__dirname + "/public"));
 const database = {
   users: [
     {
-    id: 1,
-    name: "John",
-    email: "john@example.com",
-    password: "password",
-    entries: 0,
-    joined: new Date()
-    } 
+      id: 1,
+      name: "John",
+      email: "john@example.com",
+      password: "password",
+      entries: 0,
+      joined: new Date()
+    }
   ]
 };
+
 app.post("/signin", (req, res) => {
   if (
     req.body.email === database.users[0].email &&
@@ -30,6 +31,18 @@ app.post("/signin", (req, res) => {
   }
 });
 
+app.post("/register", (req, res) => {
+  const { email, name, password } = req.body;
+  database.users.push({
+    id: database.users.length,
+    name: name,
+    email: email,
+    password: password,
+    entries: 0,
+    joined: new Date()
+  });
+  res.json(database.users[database.users.length -1])
+});
 /* /signin -> POST success/fail
  * /register -> POST success => return user
  * /profile/:userId -> GET user
