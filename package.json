@@ -1,0 +1,27 @@
+{
+  "name": "face-brain-backend",
+  "version": "1.0.0",
+  "description": "Express.js backend for the face-brain app at [FaceBrain](https://github.com/gonzric1/face-brain)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gonzric1/face-brain-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gonzric1/face-brain-server/issues"
+  },
+  "homepage": "https://github.com/gonzric1/face-brain-server#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
