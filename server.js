@@ -1,37 +1,37 @@
-const express = require("express");
+const express = require('express');
 
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + '/public'));
 
 const database = {
   users: [
     {
       id: 1,
-      name: "John",
-      email: "john@example.com",
-      password: "password",
+      name: 'John',
+      email: 'john@example.com',
+      password: 'password',
       entries: 0,
-      joined: new Date()
-    }
-  ]
+      joined: new Date(),
+    },
+  ],
 };
 
-app.post("/signin", (request, response) => {
+app.post('/signin', (request, response) => {
   if (
     request.body.email === database.users[0].email &&
     request.body.password === database.users[0].password
   ) {
-    response.json("success");
+    response.json('success');
   } else {
-    response.status(400).json("error logging in");
+    response.status(400).json('error logging in');
   }
 });
 
-app.post("/register", (request, response) => {
+app.post('/register', (request, response) => {
   const { email, name, password } = request.body;
   database.users.push({
     id: database.users.length + 1,
@@ -39,25 +39,36 @@ app.post("/register", (request, response) => {
     email: email,
     password: password,
     entries: 0,
-    joined: new Date()
+    joined: new Date(),
   });
   response.json(database.users[database.users.length - 1]);
 });
 
-app.get("/profile/:id", (request, response) => {
+app.get('/profile/:id', (request, response) => {
   const index = database.users.find(
-    element => element.id === parseInt(request.params.id)
+    element => element.id === parseInt(request.params.id),
   );
-  console.log("index is: ", index);
-  if (index !== undefined) {
+  console.log('index is: ', index);
+  if (index) {
     response.json(index);
-    console.log("returning:", index);
+    console.log('returning:', index);
   } else {
-    response.status(404).json("Page not found");
-    console.log("error 404");
+    response.status(404).json('Page not found');
+    console.log('error 404');
   }
 });
 
+app.put('/image', (request, response) => {
+  const user = database.users.find(
+    element => element.id === parseInt(request.body.userid),
+  );
+  if (user) {
+    user.entries += 1;
+    response.json(user.entries);
+  } else {
+    response.status(404).json('User not found');
+  }
+});
 /* /signin -> POST success/fail
  * /register -> POST success => return user
  * /profile/:userId -> GET user
@@ -67,5 +78,5 @@ app.get("/profile/:id", (request, response) => {
  */
 
 app.listen(3000, () => {
-  console.log("FaceBrain api running on port 3000");
+  console.log('FaceBrain api running on port 3000');
 });
