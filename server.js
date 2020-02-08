@@ -17,7 +17,7 @@ const database = {
       id: 1,
       name: 'John',
       email: 'john@example.com',
-      password: '$2y$10$ZPu0.UmKGZcJV0jja.khL.P4s33/sP/xEb8NiGE4a/outFgAeLOGi',
+      password: '$2b$10$6I7UmlNOvGxyNdGHzqLrm.s0S7.GfHEJwLcVuXlzEROwFmnHGSV9.',
       entries: 0,
       joined: new Date(),
     },
@@ -25,12 +25,15 @@ const database = {
 };
 
 app.post('/signin', (request, response) => {
+  console.log(request.body)
   if (request.body.email === database.users[0].email) {
-    bcrypt.compare(request.body.password, database.users[0].hash, function(
+    console.log("email found!")
+    bcrypt.compare(request.body.password, database.users[0].password, function(
       err,
       result,
     ) {
       if (result) {
+        console.log('password correct!')
         response.json(database.users[0]);
       } else {
         response.status(400).json(err); 
@@ -82,12 +85,14 @@ app.get('/profile/:id', (request, response) => {
 });
 
 app.put('/image', (request, response) => {
-  const user = database.users.find(
+  const user = database.users[0]
+  
+  /*.find(
     element => element.id === parseInt(request.body.userid),
-  );
+  );?*/
   if (user) {
     user.entries++;
-    response.json(user.entries);
+    response.json({entries: user.entries});
   } else {
     response.status(404).json('User not found');
   }
