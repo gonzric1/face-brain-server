@@ -4,7 +4,7 @@
   "description": "Express.js backend for the face-brain app at [FaceBrain](https://github.com/gonzric1/face-brain)",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1", 
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon"
   },
   "repository": {
@@ -24,6 +24,8 @@
   "dependencies": {
     "bcrypt": "^3.0.8",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "knex": "^0.20.9",
+    "pg": "^7.18.1"
   }
 }

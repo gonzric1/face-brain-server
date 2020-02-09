@@ -1,14 +1,24 @@
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
+const knex = require('knex');
+
+const db = knex({
+  client: 'pg',
+  connection: {
+    host : '127.0.0.1',
+    user : 'ricky',
+    password : 'rqer4134',
+    database : 'facebrain-dev'
+  }
+});
 
 const app = express();
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 app.use(express.static(__dirname + '/public'));
 
-const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 const database = {
@@ -53,16 +63,17 @@ app.post('/register', (request, response) => {
   ) {
     console.log('bcrypting')
     if (hash) {
-      database.users.push({
-        id: database.users.length + 1,
-        name: name,
-        email: email,
-        password: hash,
-        entries: 0,
-        joined: new Date()
-      }); 
-      console.log('new user registered', database.users[database.users.length-1])
-      response.status(200).json("User Registered");
+      db('users')
+        .returning('*')  
+        .insert({email: email, hash: hash})
+        .then( user => { 
+          db('profile')
+          .returning('*')
+          .insert({name: name, userid: user[0].id})
+          .then( profile => response.status(200).json(profile[0]))
+          .catch(error => response.status(400).json('unable to create profile'));
+        })
+        .catch(error => response.status(400).json('unable to register'));
     } else {
       console.log(err);
       response.status(400)
@@ -82,7 +93,7 @@ app.get('/profile/:id', (request, response) => {
   } else {
     response.status(404).json('Page not found');
   }
-});
+}); 
 
 app.put('/image', (request, response) => {
   const user = database.users[0]
