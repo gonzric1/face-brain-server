@@ -73,30 +73,26 @@ app.post('/register', (request, response) => {
 
 });
 
-app.get('/profile/:id', (request, response) => {
-  const index = database.users.find(
-    element => element.id === parseInt(request.params.id),
-  );
-
-  if (index) {
-    response.json(index);
-  } else {
-    response.status(404).json('Page not found');
-  }
+app.get('/profile/:userid', (request, response) => {
+  db('profile')
+  .where('userid', request.params.userid)
+  .then(profile => response.json(profile[0]))
+  .catch(response => response.status(404).json('Page not found'))
+  
 }); 
 
 app.put('/image', (request, response) => {
-  const user = database.users[0]
+  console.log(request.body)
+  db('profile')
+    .where('userid',request.body.userid)
+    .increment('entries', 1)
+    .returning('entries')
+    .then(entries => response.status(200).json({entries: entries[0]}))
+    .catch(err => response.status(400))
   
-  /*.find(
-    element => element.id === parseInt(request.body.userid),
-  );?*/
-  if (user) {
-    user.entries++;
-    response.json({entries: user.entries});
-  } else {
-    response.status(404).json('User not found');
-  }
+  /*.increment('entries', 1)
+  console.log(entries) */
+
 });
 
 app.listen(3001, () => {
