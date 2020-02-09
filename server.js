@@ -21,38 +21,28 @@ app.use(express.static(__dirname + '/public'));
 
 const saltRounds = 10;
 
-const database = {
-  users: [
-    {
-      id: 1,
-      name: 'John',
-      email: 'john@example.com',
-      password: '$2b$10$6I7UmlNOvGxyNdGHzqLrm.s0S7.GfHEJwLcVuXlzEROwFmnHGSV9.',
-      entries: 0,
-      joined: new Date(),
-    },
-  ],
-};
 
 app.post('/signin', (request, response) => {
-  console.log(request.body)
-  if (request.body.email === database.users[0].email) {
-    console.log("email found!")
-    bcrypt.compare(request.body.password, database.users[0].password, function(
+
+  db('users').where({
+    email: request.body.email
+  }).select('hash', 'id').then( resp => {
+      bcrypt.compare(request.body.password, resp[0].hash.toString(), function(
       err,
       result,
-    ) {
+      ) {
+
       if (result) {
-        console.log('password correct!')
-        response.json(database.users[0]);
+
+        db('profile').where('userid', resp[0].id).then(profile => response.json(profile[0]));
       } else {
-        response.status(400).json(err); 
+        console.log(err)
       }
-    });
-  } else {
-    response.status(400).json('error logging in');
-  }
-});
+    })
+  })
+})
+    
+
 
 app.post('/register', (request, response) => {
   const { email, name, password } = request.body;
@@ -61,7 +51,7 @@ app.post('/register', (request, response) => {
     err,
     hash,
   ) {
-    console.log('bcrypting')
+
     if (hash) {
       db('users')
         .returning('*')  
@@ -75,7 +65,7 @@ app.post('/register', (request, response) => {
         })
         .catch(error => response.status(400).json('unable to register'));
     } else {
-      console.log(err);
+
       response.status(400)
     }
   });
